@@ -9,7 +9,18 @@ function getTodos() {
 async function toggleTodo(id: string, isComplete: boolean) {
   'use server';
 
-  console.log(id, isComplete);
+  await prisma.todo.update({
+    where: { id },
+    data: { isComplete },
+  });
+}
+
+async function removeTodo(id: string) {
+  'use server';
+
+  await prisma.todo.delete({
+    where: { id },
+  });
 }
 
 export default async function Home() {
@@ -17,12 +28,19 @@ export default async function Home() {
 
   return (
     <>
-      <Header title="Todo App" />
-      <ul className="pl-4">
-        {todos.map((todo) => (
-          <TodoItem key={todo.id} {...todo} toggleTodo={toggleTodo} />
-        ))}
-      </ul>
+      <div className="container mx-auto p-4 max-w-2xl">
+        <Header title="Todo App" />
+        <ul className="flex flex-col gap-1">
+          {todos.map((todo) => (
+            <TodoItem
+              key={todo.id}
+              {...todo}
+              toggleTodo={toggleTodo}
+              removeTodo={removeTodo}
+            />
+          ))}
+        </ul>
+      </div>
     </>
   );
 }
